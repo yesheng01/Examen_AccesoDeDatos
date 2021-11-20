@@ -2,7 +2,6 @@ import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.imageio.metadata.IIOMetadataNode;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -11,7 +10,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -24,6 +22,8 @@ import java.util.Scanner;
  **/
 public class Acceso_Sheng_Ye {
 
+    //Hacemos un metodo en que pase por el xml al que le pasaremos por el menu , este cada ver cargara el xml
+    //De esta manera le podemos llamar cada vez a su doc
     public static Document CargarXML(String nombredoc) throws SAXException, IOException, ParserConfigurationException {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -31,64 +31,77 @@ public class Acceso_Sheng_Ye {
         Document doc = db.parse(new File(nombredoc));
         return doc;
     }
+
+    //Empezamos a crear el metodo de xml
     public void crearxml() throws IOException {
 
+        //Lo haremos con el filewriter y luego el printwriter
         FileWriter fileWriter = null;
         PrintWriter printWriter = null;
 
+        //Al que le decimos en que cree el xml
         fileWriter = new FileWriter("src/xml/Alumnes.xml");
         printWriter = new PrintWriter(fileWriter);
+        //Y que escribamos con print en el xml , primero de todo utilizaremos la cabecera
         printWriter.println("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
         printWriter.println("<registre_alumnes>");
         printWriter.println("</registre_alumnes>");
+        //Una vez puesto , lo cerraremos
         printWriter.close();
     }
 
     //Creamos los elementos para luego ser llamado en el metodo principal
-    public Document CrearElemento(Document document, String codi_alumne, String nom_alumne, String curs,
+    public Document CrearElemento(Document document, int codi_alumne, String nom_alumne, String curs,
                                   String any_naixement, String colegi) {
         //Creamos los elementos de los campos que queremos
-        Element nodevideojuego = document.createElement("alumnes");
-        nodevideojuego.setAttribute("codi_alumne", codi_alumne);
+        Element nodealumnes = document.createElement("alumnes");
+        nodealumnes.setAttribute("codi_alumne", String.valueOf(codi_alumne));
 
 
-        Node nodetitulo = document.createElement("nom_alumne");
-        Node nodetitulotext = document.createTextNode(nom_alumne);
-        nodetitulo.appendChild(nodetitulotext);
+        Node node_nom_alumne = document.createElement("nom_alumne");
+        Node node_content_alumne = document.createTextNode(nom_alumne);
+        node_nom_alumne.appendChild(node_content_alumne);
 
-        Node nodecreador = document.createElement("curs");
-        Node nodecreadortext = document.createTextNode(curs);
-        nodecreador.appendChild(nodecreadortext);
+        Node nodecurs = document.createElement("curs");
+        Node node_content_curs = document.createTextNode(curs);
+        nodecurs.appendChild(node_content_curs);
 
-        Node nodesinopsis = document.createElement("any_naixement");
-        Node nodesinoptext = document.createTextNode(any_naixement);
-        nodesinopsis.appendChild(nodesinoptext);
+        Node node_any = document.createElement("any_naixement");
+        Node node_content_any = document.createTextNode(any_naixement);
+        node_any.appendChild(node_content_any);
 
-        Node nodeplataforma = document.createElement("colegi");
-        Node nodeplattext = document.createTextNode(colegi);
-        nodeplataforma.appendChild(nodeplattext);
+        Node nodecolegi = document.createElement("colegi");
+        Node node_content_colegi = document.createTextNode(colegi);
+        nodecolegi.appendChild(node_content_colegi);
 
         //Y lo guardaremos
-        nodevideojuego.appendChild(nodetitulo);
-        nodevideojuego.appendChild(nodecreador);
-        nodevideojuego.appendChild(nodesinopsis);
-        nodevideojuego.appendChild(nodeplataforma);
+        nodealumnes.appendChild(node_nom_alumne);
+        nodealumnes.appendChild(nodecurs);
+        nodealumnes.appendChild(node_any);
+        nodealumnes.appendChild(nodecolegi);
 
         //Y hacemos que se coja del ultimo lista
-        document.getLastChild().appendChild(nodevideojuego);
+        document.getLastChild().appendChild(nodealumnes);
 
         return document;
     }
 
-    public void crea(){
 
+
+    //Este metodo lo que haremos es escribir el xml
+    public void EscribirXML(){
+
+        //Hacemos un try catch en donde veremos el archivo de alumno xml y le llamaremos el nodo y que se escriba
+        //En el xml
         try {
             File xml = new File("src/xml/Alumnes.xml");
 
+            //Pasamos el xml
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document document = dBuilder.parse(xml);
 
+            //Preguntamos al usuario que escribir en xml de cada uno
             Scanner scanner = new Scanner(System.in);
             System.out.println("codi alumne : ");
             String texto = scanner.nextLine();
@@ -110,10 +123,13 @@ public class Acceso_Sheng_Ye {
             String texto4 = scanner4.nextLine();
 
 
-            Document document1 =CrearElemento(document , texto , texto1 , texto2  ,texto3 , texto4);
+            //Lo que pedimos , en el metodo de crear el elemento , en escribrimos en cada elemento
+            Document document1 =CrearElemento(document , Integer.parseInt(texto), texto1 , texto2  ,texto3 , texto4);
 
+            //Hacemos el normalize
             document.getDocumentElement().normalize();
 
+            //Y hacemos el transformer , de esta manera se guardara el xml
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -175,15 +191,22 @@ public class Acceso_Sheng_Ye {
             Node node = nodes.item(i);
             Element element = (Element) node;
             String titulo = element.getAttribute("codi_alumne");
-            if (titulo.equals(codi)) { //Si el text que hi ha al titol es el nom que hem cercat entrara a l'if i ho canviara per el nou titol que li donem.
+            if (titulo.equals(codi)) { //Si el text es igual que el codi de un alumno , entonces bajara y hara lo siguiente
+                //Donde le pasamos por la posicion
                 int pos = 0;
+                //Le pasamos el nodelist , que es el tag al que le pasaremos
                 NodeList ndl = doc.getElementsByTagName(valor_campo);
+                //Haremos un for que recorra todo el tagname
                 for(int is=0;is<ndl.getLength();is++)
                 {
+                    //Cuando cogemos le nodo del item al contenido del que le vamos a escribir
                     Node nodesa = ndl.item(is);
                     if(nodesa.getFirstChild().getNodeValue().equals(contenido))
+                        //Y guardamos la posicion en el pos el cotenido
                         pos = is;
                 }
+                //Donde el elmento que leemos es el valor del campo en donde coge el primero y escribe en el nodo
+                //del valor del campo al que le hemos pasado con el contenido a cambiar
                  element.getElementsByTagName(valor_campo).item(pos).getFirstChild().setNodeValue(contenido);
 
                 break; //Si entra a l'if no fa falta que cerqui mes per aixó aquest break
@@ -212,7 +235,14 @@ public class Acceso_Sheng_Ye {
 
     }
 
+    //Aqui tenemos el metodo de guardar el archivo con el parametro y con la informacion en el doc
     public static void GuardarArchivo(Document doc, String documento) throws TransformerException {
+        //Para mostrar o guardar el contenido de un documento XML es necesario crear previamente un transformador
+        //  al que se le indique el documento y el destino que se le va a dar.
+        //  El objeto transformador que se ha creado dispone de un método transform que permite realizar el volcado del documento
+        //  que se encuentra en memoria o otro formato. Se deben indicar dos parámetros: el primero es el documento de origen,
+        //  y el segundo puede ser un objeto Result, en el que se obtendrá el resultado de la transformación.
+        //  Para obtener un objeto Result se puede crear un objeto de la clase StreamResult indicando como parámetro un objeto File, OutpuStream, String o Writer.
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transf = tf.newTransformer();
         transf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -223,18 +253,27 @@ public class Acceso_Sheng_Ye {
         transf.transform(source, file);
     }
 
+    //Metodo para hacer las consultas con xpath , en donde le pasamos el string y depende de que expresion
+    //de xpath que le pasamos nos hara la consulta de una cosa o otra
     public void consultasXpath(String xPathExpression) throws FileNotFoundException, XPathExpressionException {
+        //Hacemos el input en donde leera el archivo
         InputSource inputSource = new InputSource(new FileInputStream("src/xml/Alumnes.xml"));
+        //Hacemos el xpathfactory en donde crea una nueva instancia
         XPathFactory factory = XPathFactory.newInstance();
+        //y creamos el xpath
         XPath xPath = factory.newXPath();
+        //Y la expresion que le psaremos cuando escriba o cuando pregunte
         XPathExpression expression = xPath.compile(xPathExpression);
+        //Un nodo en que pasara el xml
         NodeList list = (NodeList) expression.evaluate(inputSource, XPathConstants.NODESET);
+        //Y hacemos el for que le pasamos el xml y que depende de que le pasamos , entonces nos mostrara
+        //el contenido
         for (int i = 0; i < list.getLength(); i++) {
             System.out.println(list.item(i).getTextContent());
         }
     }
 
-
+    //Primer menu
     public void menu() throws IOException, XPathExpressionException, SAXException, ParserConfigurationException, TransformerException {
         boolean bandera = true;
         while (bandera) {
@@ -258,7 +297,7 @@ public class Acceso_Sheng_Ye {
                     crearxml();
                     break;
                 case"2":
-                    crea();
+                    EscribirXML();
                     break;
                 case"3":
                     mostrarDatos();
@@ -317,15 +356,20 @@ public class Acceso_Sheng_Ye {
             String opcion = scanner.nextLine();
             switch (opcion) {
                 case "1":
+                    //Aqui hacemos las consultas en que le pasamos la expresion segun lo que quiere saber
                     consultasXpath("//nom_alumne");
                     break;
                 case "2":
+                    //Aqui hacemos las consultas en que le pasamos la expresion segun lo que quiere saber
+
                     consultasXpath("//alumnes[colegi=\"cide\"]//nom_alumne");
                     break;
                 case "3":
+                    //Aqui hacemos las consultas en que le pasamos la expresion segun lo que quiere saber
                     consultasXpath("//alumnes[@codi_alumne='3']//nom_alumne");
                     break;
                 case "4":
+                    //Aqui hacemos las consultas en que le pasamos la expresion segun lo que quiere saber
                     consultasXpath("//alumnes[any_naixement<=1990]//nom_alumne");
                     break;
                 case "salir":
@@ -335,6 +379,7 @@ public class Acceso_Sheng_Ye {
         }
     }
 
+    //Y el main donde le pasamos el menu principal y que se ejecute
 
     public static void main(String[] args) throws IOException, ParserConfigurationException, XPathExpressionException, SAXException, TransformerException {
         Acceso_Sheng_Ye acceso_sheng_ye = new Acceso_Sheng_Ye();

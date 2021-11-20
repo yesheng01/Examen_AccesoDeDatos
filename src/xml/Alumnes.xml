@@ -1,18 +1,110 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <registre_alumnes>
-                        
+                                
+    
+    
     
     
     
     
     
     <alumnes codi_alumne="1">
-                                                
+                                                                
+        
+        
         
         
         
         
         <nom_alumne>sheng</nom_alumne>
+                                                                
+        
+        
+        
+        
+        
+        
+        <curs>2</curs>
+                                                                
+        
+        
+        
+        
+        
+        
+        <any_naixement>1990</any_naixement>
+                                                                
+        
+        
+        
+        
+        
+        
+        <colegi>cide</colegi>
+                                                            
+    
+    
+    
+    
+    
+    
+    </alumnes>
+                            
+    
+    
+    
+    
+    
+    
+    <alumnes codi_alumne="2">
+                                                        
+        
+        
+        
+        
+        
+        <nom_alumne>dani</nom_alumne>
+                                                        
+        
+        
+        
+        
+        
+        <curs>2</curs>
+                                                        
+        
+        
+        
+        
+        
+        <any_naixement>1999</any_naixement>
+                                                        
+        
+        
+        
+        
+        
+        <colegi>cide</colegi>
+                                                    
+    
+    
+    
+    
+    
+    </alumnes>
+                        
+    
+    
+    
+    
+    
+    <alumnes codi_alumne="3">
+                                                
+        
+        
+        
+        
+        <nom_alumne>Rodrigo</nom_alumne>
                                                 
         
         
@@ -24,7 +116,7 @@
         
         
         
-        <any_naixement>1990</any_naixement>
+        <any_naixement>1998</any_naixement>
                                                 
         
         
@@ -42,12 +134,12 @@
     
     
     
-    <alumnes codi_alumne="2">
+    <alumnes codi_alumne="4">
                                         
         
         
         
-        <nom_alumne>dani</nom_alumne>
+        <nom_alumne>Ismael</nom_alumne>
                                         
         
         
@@ -57,12 +149,12 @@
         
         
         
-        <any_naixement>1999</any_naixement>
+        <any_naixement>2000</any_naixement>
                                         
         
         
         
-        <colegi>cide</colegi>
+        <colegi>san cayetano</colegi>
                                     
     
     
@@ -72,11 +164,11 @@
     
     
     
-    <alumnes codi_alumne="3">
+    <alumnes codi_alumne="5">
                                 
         
         
-        <nom_alumne>Rodrigo</nom_alumne>
+        <nom_alumne>juan</nom_alumne>
                                 
         
         
@@ -84,45 +176,27 @@
                                 
         
         
-        <any_naixement>1998</any_naixement>
+        <any_naixement>1989</any_naixement>
                                 
         
         
-        <colegi>cide</colegi>
+        <colegi>son pisa</colegi>
                             
     
     
     </alumnes>
             
+
     
-    
-    <alumnes codi_alumne="4">
-                        
-        
-        <nom_alumne>Ismael</nom_alumne>
-                        
-        
-        <curs>2</curs>
-                        
-        
-        <any_naixement>2000</any_naixement>
-                        
-        
-        <colegi>san cayetano</colegi>
-                    
-    
-    </alumnes>
-        
-    
-    <alumnes codi_alumne="5">
+    <alumnes codi_alumne="6">
                 
-        <nom_alumne>juan</nom_alumne>
+        <nom_alumne>irene</nom_alumne>
                 
-        <curs>2</curs>
+        <curs>1</curs>
                 
         <any_naixement>1989</any_naixement>
                 
-        <colegi>son pisa</colegi>
+        <colegi>cide</colegi>
             
     </alumnes>
     

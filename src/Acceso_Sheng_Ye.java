@@ -88,12 +88,16 @@ public class Acceso_Sheng_Ye {
 
 
 
+
+
+
     //Este metodo lo que haremos es escribir el xml
     public void EscribirXML(){
 
         //Hacemos un try catch en donde veremos el archivo de alumno xml y le llamaremos el nodo y que se escriba
         //En el xml
         try {
+
             File xml = new File("src/xml/Alumnes.xml");
 
             //Pasamos el xml
@@ -115,7 +119,7 @@ public class Acceso_Sheng_Ye {
             String texto2 = scanner2.nextLine();
 
             Scanner scanner3 = new Scanner(System.in);
-            System.out.println("any: ");
+            System.out.println("any_naixement: ");
             String texto3 = scanner3.nextLine();
 
             Scanner scanner4 = new Scanner(System.in);
@@ -129,13 +133,10 @@ public class Acceso_Sheng_Ye {
             //Hacemos el normalize
             document.getDocumentElement().normalize();
 
-            //Y hacemos el transformer , de esta manera se guardara el xml
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            Result output = new StreamResult(new File("src/xml/Alumnes.xml"));
-            Source input = new DOMSource(document1);
-            transformer.transform(input, output);
+            GuardarArchivo(document , "src/xml/Alumnes.xml");
+
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,7 +157,7 @@ public class Acceso_Sheng_Ye {
         NodeList nodos = (NodeList) xpath.evaluate(xPathExpression, documento, XPathConstants.NODESET);
         for (int i = 0; i < nodos.getLength(); i++) {
             // y mostramos un mensaje cada vez que encuentra un nodo, con el nombre del nodo (es decir, la etiqueta)
-            // y el/los atributo/s que tiene dicha etiqueta. En este caso busca el atributo "nombre"
+            // y el/los atributo/s que tiene dicha etiqueta. En este caso busca el atributo "el codi_alumne"
 
             if (nodos.item(i).getNodeName().equals("alumnes")){
                 System.out.println(nodos.item(i).getNodeName() + " : " +
@@ -183,10 +184,10 @@ public class Acceso_Sheng_Ye {
 
 
     //Pasam per parametre el nom del joc que volem modificar y el nou nom que volem ficar per modificar el joc.
-    public static Document ModificarNomJoc(Document doc, String codi, String valor_campo, String contenido) throws SAXException, IOException, ParserConfigurationException {
+    public static Document Modificar(Document doc, String codi, String valor_campo, String contenido) throws SAXException, IOException, ParserConfigurationException {
         //Recream els nodes amb node list i cercam els elements titol
         NodeList nodes = doc.getElementsByTagName("alumnes");
-        //Pasam per tots els elements titol amb el for
+        //Pasam per tots els elements alumno amb el for
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             Element element = (Element) node;
@@ -218,16 +219,16 @@ public class Acceso_Sheng_Ye {
     }
 
 
-    //Pasam per parametre el nom del joc que volem eliminar.
-    public static Document EliminarJoc(Document doc, String codi) throws SAXException, IOException, ParserConfigurationException {
+    //Pasam per parametre el nom del node que volem eliminar.
+    public static Document Eliminar(Document doc, String codi) throws SAXException, IOException, ParserConfigurationException {
         NodeList nodes = doc.getElementsByTagName("alumnes");
         //Tornam a fer un bucle per cercar el joc per titol.
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             Element element = (Element) node;
-            //Feim una nova variable per trobar el nom del joc que esteim cercant com solament hi ha un joc posam .item(0) ja que solament podrá estar a la possicio 0.
-            String titulo = element.getAttribute("codi_alumne");
-            if (titulo.equals(codi)) { //Si el titol es igual al que hem pasat per parametre simplement l'eliminarà.
+            //Feim una nova variable per trobar el nom del joc que esteim cercant com solament hi ha un node posam .item(0) ja que solament podrá estar a la possicio 0.
+            String codiAlumne = element.getAttribute("codi_alumne");
+            if (codiAlumne.equals(codi)) { //Si el codi es igual al que hem pasat per parametre simplement l'eliminarà.
                 element.getParentNode().removeChild(element);
             }
         }
@@ -236,7 +237,7 @@ public class Acceso_Sheng_Ye {
     }
 
     //Aqui tenemos el metodo de guardar el archivo con el parametro y con la informacion en el doc
-    public static void GuardarArchivo(Document doc, String documento) throws TransformerException {
+    public static void GuardarArchivo(Document doc, String documento) throws TransformerException, XPathExpressionException {
         //Para mostrar o guardar el contenido de un documento XML es necesario crear previamente un transformador
         //  al que se le indique el documento y el destino que se le va a dar.
         //  El objeto transformador que se ha creado dispone de un método transform que permite realizar el volcado del documento
@@ -249,8 +250,20 @@ public class Acceso_Sheng_Ye {
         transf.setOutputProperty(OutputKeys.INDENT, "yes");
 
         DOMSource source = new DOMSource(doc);
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPathExpression xpathExp = xpathFactory.newXPath().compile(
+                "//text()[normalize-space(.) = '']");
+        NodeList emptyTextNodes = (NodeList)
+                xpathExp.evaluate(doc, XPathConstants.NODESET);
+        // Remove each empty text node from document.
+        for (int i = 0; i < emptyTextNodes.getLength(); i++) {
+            Node emptyTextNode = emptyTextNodes.item(i);
+            emptyTextNode.getParentNode().removeChild(emptyTextNode);
+        }
         StreamResult file = new StreamResult(new File(documento));
         transf.transform(source, file);
+
+
     }
 
     //Metodo para hacer las consultas con xpath , en donde le pasamos el string y depende de que expresion
@@ -314,7 +327,7 @@ public class Acceso_Sheng_Ye {
                     Scanner scanner4 = new Scanner(System.in);
                     String textosasa = scanner4.nextLine();
 
-                    ModificarNomJoc(doc , textosa,textosas,textosasa);
+                    Modificar(doc , textosa,textosas,textosasa);
                     GuardarArchivo(doc,"src/xml/Alumnes.xml");
                     break;
                 case"5":
@@ -325,12 +338,10 @@ public class Acceso_Sheng_Ye {
                     System.out.println("Cual ID quisieras eliminar: ");
                     Scanner scanner1 = new Scanner(System.in);
                     String texto = scanner1.nextLine();
-                    EliminarJoc(docs , texto);
+                    Eliminar(docs , texto);
                     GuardarArchivo(docs,"src/xml/Alumnes.xml");
                     break;
                 case"salir":
-                    Document docas = CargarXML("src/xml/Alumnes.xml");
-                    GuardarArchivo(docas,"src/xml/Alumnes.xml");
                     bandera = false;
                     break;
             }

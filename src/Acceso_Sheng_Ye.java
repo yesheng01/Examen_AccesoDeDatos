@@ -46,7 +46,7 @@ public class Acceso_Sheng_Ye {
         printWriter.println("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
         printWriter.println("<registre_alumnes>");
         printWriter.println("</registre_alumnes>");
-        //Una vez puesto , lo cerraremos
+        //Una vez puesto y escrito , lo cerraremos
         printWriter.close();
     }
 
@@ -127,16 +127,13 @@ public class Acceso_Sheng_Ye {
             String texto4 = scanner4.nextLine();
 
 
-            //Lo que pedimos , en el metodo de crear el elemento , en escribrimos en cada elemento
-            Document document1 =CrearElemento(document , Integer.parseInt(texto), texto1 , texto2  ,texto3 , texto4);
+            //Lo que pedimos , en el metodo de crear el elemento y que escribrimos en cada elemento
+            CrearElemento(document , Integer.parseInt(texto), texto1 , texto2  ,texto3 , texto4);
 
             //Hacemos el normalize
             document.getDocumentElement().normalize();
 
             GuardarArchivo(document , "src/xml/Alumnes.xml");
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -174,14 +171,11 @@ public class Acceso_Sheng_Ye {
             }else if (nodos.item(i).getNodeName().equals("colegi")){
                 System.out.println(nodos.item(i).getNodeName() + " : " +
                         nodos.item(i).getTextContent());
-
                 System.out.println("**********************************************");
             }
 
         }
     }
-
-
 
     //Pasam per parametre el nom del joc que volem modificar y el nou nom que volem ficar per modificar el joc.
     public static Document Modificar(Document doc, String codi, String valor_campo, String contenido) throws SAXException, IOException, ParserConfigurationException {
@@ -249,10 +243,13 @@ public class Acceso_Sheng_Ye {
         transf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transf.setOutputProperty(OutputKeys.INDENT, "yes");
 
+        //Consultamos con el dom , en donde le pasamos el expresion de xpath
         DOMSource source = new DOMSource(doc);
         XPathFactory xpathFactory = XPathFactory.newInstance();
+        //Aqui la expresion de xpath y es donde le compilamos
         XPathExpression xpathExp = xpathFactory.newXPath().compile(
                 "//text()[normalize-space(.) = '']");
+        //Le pasamos el nodolist
         NodeList emptyTextNodes = (NodeList)
                 xpathExp.evaluate(doc, XPathConstants.NODESET);
         // Remove each empty text node from document.
@@ -326,7 +323,6 @@ public class Acceso_Sheng_Ye {
                     System.out.println("Que quieres poner?");
                     Scanner scanner4 = new Scanner(System.in);
                     String textosasa = scanner4.nextLine();
-
                     Modificar(doc , textosa,textosas,textosasa);
                     GuardarArchivo(doc,"src/xml/Alumnes.xml");
                     break;
